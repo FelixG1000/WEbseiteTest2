@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de" data-bs-theme="dark">
+
+<head>
+  <title>KFZ Gritscher GmbH</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Navbar bleibt immer dunkel und sticky */
+    .navbar-dark {
+      background-color: #343a40 !important;
+      position: sticky;
+      top: 0;
+      z-index: 1000; /* Sicherstellen, dass die Navbar über anderen Elementen liegt */
+      transition: background-color 0.3s ease;
+    }
+
+    .navbar-dark .nav-link.active {
+      color: #f8f9fa !important; /* Helleres Weiß für aktiven Link */
+    }
+
+    .navbar-dark .nav-link,
+    .navbar-dark .navbar-brand {
+      color: #c1c3c5 !important; /* Dunkleres Weiß für die Navigationslinks */
+    }
+
+    /* Hover-Effekt für die Navigationslinks */
+    .navbar-dark .nav-link:hover {
+      color: #f8f9fa !important; /* Dunkleres Grau für Hover */
+    }
+
+    /* Darkmode-Umschalter */
+    .theme-switch {
+      position: fixed;
+      top: 80px; /* Unterhalb der Navbar */
+      right: 20px;
+      background-color: var(--bs-secondary-bg);
+      color: var(--bs-body-color);
+      border: none;
+      padding: 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 1; /* Unter der Navbar */
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .theme-switch.hidden,
+    .navbar-dark.hidden {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+
+    /* Toast dynamisch anpassen */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+    }
+
+    .toast {
+      max-width: 100%;
+      width: auto;
+    }
+
+    @media (max-width: 768px) {
+      .toast-container {
+        bottom: 10px; /* Platz für Mobilgeräte */
+        right: 50%;
+        transform: translateX(50%); /* Zentriere horizontal */
+        display: flex;
+        justify-content: center;
+      }
+
+      .toast {
+        width: 90%; /* Toast nimmt weniger Platz ein */
+        font-size: 0.9rem; /* Textgröße für kleinere Displays */
+      }
+    }
+
+    /* Stile für die Kästen */
+    .column-box {
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid var(--bs-border-color);
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Noch größerer und dunklerer Schatten */
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+      background-color: var(--bs-bg-color);
+      color: var(--bs-body-color);
+    }
+
+    /* Hover-Effekt nur für größere Bildschirme */
+    @media (min-width: 769px) {
+      .column-box:hover {
+        background-color: var(--bs-hover-bg);
+        transform: scale(1.05);
+      }
+    }
+
+    /* Variablen für Hover-Hintergrundfarben und Border-Farben */
+    :root[data-bs-theme="dark"] {
+      --bs-hover-bg: #2e2e2e; /* Dunkleres Grau für Hover */
+      --bs-border-color: #4a4a4a;
+      --bs-bg-color: #1f1f1f; /* Minimal helleres Grau für Darkmode */
+      --bs-body-color: #c1c3c5; /* Textfarbe für Darkmode */
+    }
+
+    :root[data-bs-theme="light"] {
+      --bs-hover-bg: #e9ecef;
+      --bs-border-color: #ccc;
+      --bs-body-color: #000; /* Textfarbe für Lightmode */
+    }
+
+    /* Zusätzliche Stile für kleinere Bildschirme */
+    @media (max-width: 768px) {
+      .column-box {
+        margin: 15px; /* Erhöhter Margin für kleinere Bildschirme */
+        margin-left: 20px; /* Erhöhter Margin-Left */
+        width: 100%; /* Breite auf 100% setzen */
+        max-width: 90%; /* Maximale Breite begrenzen */
+      }
+
+      /* Hintergrundfarbe für Darkmode im Smartphone-Modus */
+      :root[data-bs-theme="dark"] .column-box {
+        background-color: #2e2e2e; /* Etwas dunkleres Grau */
+      }
+    }
+
+    /* Hero-Bereich Hintergrundfarbe */
+    .hero-section {
+      background-color: #1e1e1e; /* Etwas helleres Schwarz */
+      animation: fadeIn 2s forwards;
+      padding-top: 100px; /* Zusätzlicher Abstand oben */
+      padding-bottom: 100px; /* Zusätzlicher Abstand unten */
+    }
+
+    /* Animationen */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Typografie */
+    h1, h2, h3 {
+      font-family: 'Arial', sans-serif;
+      color: var(--bs-body-color);
+    }
+
+    p {
+      font-family: 'Arial', sans-serif;
+      color: var(--bs-body-color);
+    }
+
+    /* Footer */
+    footer {
+      background-color: #343a40;
+      color: var(--bs-body-color);
+      padding: 20px;
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--bs-body-color);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Kartenstruktur für Kacheln */
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .card-title:hover {
+      color: #007bff; /* Blaue Hover-Farbe */
+    }
+
+    .card-text {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-img-top {
+      border-radius: 15px 15px 0 0;
+      transition: transform 0.3s ease;
+    }
+
+    .card-img-top:hover {
+      transform: scale(1.05);
+    }
+
+    /* Hover-Effekte für Navigationslinks */
+    .nav-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Hover-Effekte für Footer-Links */
+    footer a:hover {
+      color: #007bff; /* Blaue Hover-Farbe */
+    }
+
+    /* Social Media Icons */
+    .social-media {
+      margin-top: 20px;
+    }
+
+    .social-media a {
+      color: var(--bs-body-color);
+      margin: 0 10px;
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .social-media a:hover {
+      color: #007bff; /* Blaue Hover-Farbe */
+    }
+
+    /* Testimonials */
+    .testimonials {
+      margin-top: 20px;
+    }
+
+    .testimonial {
+      padding: 20px;
+      border: 1px solid var(--bs-border-color);
+      border-radius: 10px;
+      background-color: var(--bs-bg-color);
+      color: var(--bs-body-color);
+      margin-bottom: 20px;
+    }
+
+    .testimonial p {
+      margin: 0;
+    }
+
+    /* Call-to-Action Buttons */
+    .cta-button {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .cta-button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Bildergalerie */
+    .gallery {
+      margin-top: 20px;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+
+    /* FAQ-Bereich */
+    .faq {
+      margin-top: 20px;
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+    }
+
+    .faq-item h4 {
+      margin-bottom: 10px;
+    }
+
+    .faq-item p {
+      margin: 0;
+    }
+
+    /* Spezifische Stile für den Hero-Bereich */
+    .hero-section h1,
+    .hero-section p {
+      color: #f8f9fa !important; /* Weiße Schriftfarbe */
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <img src="Images/logotransparent.png" alt="Logo" style="width:125px; height:auto;" class="rounded-pill">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="index.html">Startseite</a></li>
+          <li class="nav-item"><a class="nav-link" href="werkstaette.html">Werkstätte</a></li>
+          <li class="nav-item"><a class="nav-link" href="anUndVerkauf.html">An-& Verkauf</a></li>
+          <li class="nav-item"><a class="nav-link" href="traktor.html">Traktor</a></li>
+          <li class="nav-item"><a class="nav-link" href="ueberuns.html">Über Uns</a></li>
+          <li class="nav-item"><a class="nav-link" href="kontakt.html">Kontakt</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Darkmode-Umschalter -->
+  <button class="theme-switch" id="themeSwitch">🌙</button>
+
+  <!-- Hero-Bereich -->
+  <div class="container-fluid p-5 hero-section text-center">
+    <h1>KFZ Gritscher GmbH</h1>
+    <p>Kompetenz und Leidenschaft seit 1996</p>
+  </div>
+
+  <!-- Hauptinhalt -->
+  <div class="container my-5">
+    <div class="row g-5 justify-content-center">
+      <div class="col-md-4">
+        <div class="card column-box">
+          <div class="card-body">
+            <h3 class="card-title">Willkommen bei KFZ Gritscher</h3>
+            <p class="card-text">Schön, dass Sie den Weg zu uns gefunden haben! Unser Familienbetrieb steht für:</p>
+            <ul class="list-unstyled">
+              <li>✔️ Tiroler Handschlagqualität</li>
+              <li>✔️ Persönlichen Kontakt</li>
+              <li>✔️ Höchste Kundenzufriedenheit</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card column-box">
+          <img src="Images/FotoOben.jpeg" alt="Auto wird repariert" class="card-img-top img-fluid rounded">
+          <div class="card-body">
+            <h3 class="card-title">Unsere Werkstätte</h3>
+            <p class="card-text">Wir bieten Reparaturen und Service für alle Fahrzeugmarken. Unsere Leistungen umfassen:</p>
+            <ul class="list-unstyled">
+              <li>✔️ § 57a Pickerlüberprüfung</li>
+              <li>✔️ Motor- und Getriebereparaturen</li>
+              <li>✔️ Klimaanlagenwartung</li>
+              <li>✔️ Reifenservice und mehr</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card column-box">
+          <div class="card-body">
+            <h3 class="card-title">An- und Verkauf</h3>
+            <p class="card-text">Wir kaufen und verkaufen Fahrzeuge – fair, transparent und zuverlässig.</p>
+            <ul class="list-unstyled">
+              <li>✔️ Faire Ankaufspreise</li>
+              <li>✔️ Geprüfte Gebrauchtwagen</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media Icons -->
+    <div class="social-media text-center">
+      <a href="https://www.facebook.com/yourpage" class="fab fa-facebook-f"></a>
+      <a href="https://www.instagram.com/yourpage" class="fab fa-instagram"></a>
+    </div>
+
+    <!-- Google Maps -->
+    <div class="map-container">
+      <h2>Unser Standort</h2>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2689.595485370234!2d11.39404731567571!3d47.26922497913421!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x479e7732f3c2b513%3A0x5017d9a42e7e8f0!2sKFZ%20Gritscher%20GmbH!5e0!3m2!1sen!2sat!4v1639944275747!5m2!1sen!2sat" width="100%" height="400" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="testimonials">
+      <h2>Was unsere Kunden sagen</h2>
+      <div class="testimonial">
+        <p>"Sehr zufrieden mit dem Service und der Qualität der Arbeit. Kann ich nur weiterempfehlen!"</p>
+        <p>- Max Mustermann</p>
+      </div>
+      <div class="testimonial">
+        <p>"Schnelle und zuverlässige Reparatur. Werde auf jeden Fall wiederkommen."</p>
+        <p>- Erika Beispiel</p>
+      </div>
+    </div>
+
+    <!-- Call-to-Action Button -->
+    <div class="text-center">
+      <a href="kontakt.html" class="cta-button">Jetzt Termin vereinbaren</a>
+    </div>
+
+    <!-- Bildergalerie -->
+    <div class="gallery">
+      <h2>Unsere Galerie</h2>
+      <img src="Images/galeryFoto1.jpeg" alt="Bild 1">
+      <img src="Images/galeryFoto2.jpeg" alt="Bild 2">
+      <img src="Images/AutoReperatur.jpg" alt="Bild 3"> 
+    </div>
+
+    <!-- FAQ-Bereich -->
+    <div class="faq">
+      <h2>Häufig gestellte Fragen</h2>
+      <div class="faq-item">
+        <h4>Wie lange dauert eine typische Reparatur?</h4>
+        <p>Die Dauer einer Reparatur hängt von der Art des Problems ab. In der Regel dauert eine typische Reparatur zwischen 1 und 3 Tagen.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Kann ich einen Termin online buchen?</h4>
+        <p>Ja, Sie können einen Termin online über unser Kontaktformular buchen.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto">Bereit für den Winter?</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        <p>Schon das Pickerl gemacht? Schon die Reifen gewechselt? Nein? Dann vereinbaren Sie jetzt einen <a href="kontakt.html" class="text-decoration-none text-primary fw-bold">Termin</a>!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center py-3 bg-body-secondary">
+    <p class="mb-0">© 2024 KFZ Gritscher GmbH</p>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a href="impressum.html" class="text-decoration-none">Impressum</a></li>
+      <li class="list-inline-item"><a href="datenschutzerklaerung.html" class="text-decoration-none">Datenschutzerklärung</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-bs-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-bs-theme', newTheme);
+    }
+
+    // Darkmode-Schalter und Scroll-Handler
+    const themeSwitch = document.getElementById('themeSwitch');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        themeSwitch.classList.add('hidden');
+      } else {
+        themeSwitch.classList.remove('hidden');
+      }
+      lastScrollY = currentScrollY;
+    });
+
+    themeSwitch.addEventListener('click', toggleTheme);
+  </script>
+</body>
+
+</html>

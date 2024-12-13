@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="de" data-bs-theme="dark">
+
+<head>
+  <title>Über Uns - KFZ Gritscher</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Navbar bleibt immer dunkel und sticky */
+    .navbar-dark {
+      background-color: #343a40 !important;
+      position: sticky;
+      top: 0;
+      z-index: 1000; /* Sicherstellen, dass die Navbar über anderen Elementen liegt */
+      transition: background-color 0.3s ease;
+    }
+
+    .navbar-dark .nav-link.active {
+      color: #f8f9fa !important; /* Helleres Weiß für aktiven Link */
+    }
+
+    .navbar-dark .nav-link,
+    .navbar-dark .navbar-brand {
+      color: #c1c3c5 !important; /* Dunkleres Weiß für die Navigationslinks */
+    }
+
+    /* Hover-Effekt für die Navigationslinks */
+    .navbar-dark .nav-link:hover {
+      color: #f8f9fa !important; /* Dunkleres Grau für Hover */
+    }
+
+    /* Darkmode-Umschalter */
+    .theme-switch {
+      position: fixed;
+      top: 80px; /* Unterhalb der Navbar */
+      right: 20px;
+      background-color: var(--bs-secondary-bg);
+      color: var(--bs-body-color);
+      border: none;
+      padding: 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      z-index: 1; /* Unter der Navbar */
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .theme-switch.hidden,
+    .navbar-dark.hidden {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+    }
+
+    /* Toast dynamisch anpassen */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1050;
+    }
+
+    .toast {
+      max-width: 100%;
+      width: auto;
+    }
+
+    @media (max-width: 768px) {
+      .toast-container {
+        bottom: 10px; /* Platz für Mobilgeräte */
+        right: 50%;
+        transform: translateX(50%); /* Zentriere horizontal */
+        display: flex;
+        justify-content: center;
+      }
+
+      .toast {
+        width: 90%; /* Toast nimmt weniger Platz ein */
+        font-size: 0.9rem; /* Textgröße für kleinere Displays */
+      }
+    }
+
+    /* Stile für die Kästen */
+    .column-box {
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid var(--bs-border-color);
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* Noch größerer und dunklerer Schatten */
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+      background-color: var(--bs-bg-color);
+      color: var(--bs-body-color);
+    }
+
+    /* Hover-Effekt nur für größere Bildschirme */
+    @media (min-width: 769px) {
+      .column-box:hover {
+        background-color: var(--bs-hover-bg);
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Variablen für Hover-Hintergrundfarben und Border-Farben */
+    :root[data-bs-theme="dark"] {
+      --bs-hover-bg: #2e2e2e; /* Dunkleres Grau für Hover */
+      --bs-border-color: #4a4a4a;
+      --bs-bg-color: #1f1f1f; /* Minimal helleres Grau für Darkmode */
+      --bs-body-color: #c1c3c5; /* Textfarbe für Darkmode */
+    }
+
+    :root[data-bs-theme="light"] {
+      --bs-hover-bg: #e9ecef;
+      --bs-border-color: #ccc;
+      --bs-body-color: #000; /* Textfarbe für Lightmode */
+    }
+
+    /* Zusätzliche Stile für kleinere Bildschirme */
+    @media (max-width: 768px) {
+      .column-box {
+        margin: 15px; /* Erhöhter Margin für kleinere Bildschirme */
+        margin-left: 20px; /* Erhöhter Margin-Left */
+        width: 100%; /* Breite auf 100% setzen */
+        max-width: 90%; /* Maximale Breite begrenzen */
+      }
+
+      /* Hintergrundfarbe für Darkmode im Smartphone-Modus */
+      :root[data-bs-theme="dark"] .column-box {
+        background-color: #2e2e2e; /* Etwas dunkleres Grau */
+      }
+    }
+
+    /* Hero-Bereich Hintergrundfarbe */
+    .hero-section {
+      background-color: #1e1e1e; /* Etwas helleres Schwarz */
+      animation: fadeIn 2s forwards;
+      padding-top: 100px; /* Zusätzlicher Abstand oben */
+      padding-bottom: 100px; /* Zusätzlicher Abstand unten */
+    }
+
+    /* Animationen */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Typografie */
+    h1, h2, h3 {
+      font-family: 'Arial', sans-serif;
+      color: var(--bs-body-color);
+    }
+
+    p {
+      font-family: 'Arial', sans-serif;
+      color: var(--bs-body-color);
+    }
+
+    /* Footer */
+    footer {
+      background-color: #343a40;
+      color: var(--bs-body-color);
+      padding: 20px;
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--bs-body-color);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Kartenstruktur für Kacheln */
+    .card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    .card-title:hover {
+      color: #007bff; /* Blaue Hover-Farbe */
+    }
+
+    .card-text {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-img-top {
+      border-radius: 15px 15px 0 0;
+      transition: transform 0.3s ease;
+    }
+
+    .card-img-top:hover {
+      transform: scale(1.05);
+    }
+
+    /* Hover-Effekte für Navigationslinks */
+    .nav-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Hover-Effekte für Footer-Links */
+    footer a:hover {
+      color: #007bff; /* Blaue Hover-Farbe */
+    }
+
+    /* Social Media Icons */
+    .social-media {
+      margin-top: 20px;
+    }
+
+    .social-media a {
+      color: var(--bs-body-color);
+      margin: 0 10px;
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .social-media a:hover {
+      color: #007bff; /* Blaue Hover-Farbe */
+    }
+
+    /* Testimonials */
+    .testimonials {
+      margin-top: 20px;
+    }
+
+    .testimonial {
+      padding: 20px;
+      border: 1px solid var(--bs-border-color);
+      border-radius: 10px;
+      background-color: var(--bs-bg-color);
+      color: var(--bs-body-color);
+      margin-bottom: 20px;
+    }
+
+    .testimonial p {
+      margin: 0;
+    }
+
+    /* Call-to-Action Buttons */
+    .cta-button {
+      display: inline-block;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+
+    .cta-button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Bildergalerie */
+    .gallery {
+      margin-top: 20px;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+
+    /* FAQ-Bereich */
+    .faq {
+      margin-top: 20px;
+    }
+
+    .faq-item {
+      margin-bottom: 20px;
+    }
+
+    .faq-item h4 {
+      margin-bottom: 10px;
+    }
+
+    .faq-item p {
+      margin: 0;
+    }
+
+    /* Spezifische Stile für den Hero-Bereich */
+    .hero-section h1,
+    .hero-section p {
+      color: #f8f9fa !important; /* Weiße Schriftfarbe */
+    }
+
+    /* Flexbox-Layout für den Footer */
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    .footer {
+      margin-top: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">
+        <img src="Images/logotransparent.png" alt="Logo" style="width:125px; height:auto;" class="rounded-pill">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Startseite</a></li>
+          <li class="nav-item"><a class="nav-link" href="werkstaette.html">Werkstätte</a></li>
+          <li class="nav-item"><a class="nav-link" href="anUndVerkauf.html">An-& Verkauf</a></li>
+          <li class="nav-item"><a class="nav-link" href="traktor.html">Traktor</a></li>
+          <li class="nav-item"><a class="nav-link active" href="ueberuns.html">Über Uns</a></li>
+          <li class="nav-item"><a class="nav-link" href="kontakt.html">Kontakt</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Darkmode-Umschalter -->
+  <button class="theme-switch" id="themeSwitch">🌙</button>
+
+  <!-- Wrapper für Flexbox-Layout -->
+  <div class="wrapper">
+    <!-- Hero-Bereich -->
+    <div class="container-fluid p-5 hero-section text-white text-center">
+      <h1>Über Uns</h1>
+    </div>
+
+    <!-- Inhalt in 3 Spalten -->
+    <div class="container mt-5 content">
+      <div class="row g-5">
+        <!-- Erste Karte -->
+        <div class="col-md-4">
+          <div class="card column-box">
+            <img class="card-img-top" src="Images/christof.png" alt="Christof Gritscher" style="width:100%">
+            <div class="card-body">
+              <h4 class="card-title">Christof Gritscher</h4>
+              <p class="card-text">Leidenschaft und liebt seinen Beruf über alles. Gerne packt er selbst auch Hand an und löst mit vollem Einsatz auch die kniffligsten Probleme, auch wenn das bedeutet, dass in der hauseigenen Dreherei über Nacht Teile angefertigt werden müssen.</p>
+              <p class="card-text">Zusammen mit Alexandra hat er 5 Kinder in allen Altersstufen. Da stehen auch Abenteuer, Quatsch, Freude, Spaß und noch vieles mehr auf dem Programm.</p>
+              <a href="https://www.facebook.com/gritscher.kfz/?locale=de_DE" class="btn btn-primary">Mehr erfahren</a>
+            </div>
+          </div>
+        </div>
+        <!-- Zweite Karte -->
+        <div class="col-md-4">
+          <div class="card column-box">
+            <img class="card-img-top" src="Images/Anonym.png" alt="Werkstatt" style="width:100%">
+            <div class="card-body">
+              <h4 class="card-title">Das KFZ-Gritscher Werkstätten-Team</h4>
+              <p class="card-text">Martin und Elias sowie auch Christof sind für Ihre Fahrzeuge verantwortlich. Mit Sorgfalt, Vorsicht und voller Begeisterung sowie Elan legen sie an den kleinen und großen "Wehwehchen" Ihres Fahrzeuges Hand an.</p>
+              <p class="card-text">Martin und Elias sind wie Christof, Mechaniker mit Leib und Seele.</p>
+              <a href="werkstaette.html" class="btn btn-primary">Mehr erfahren</a>
+            </div>
+          </div>
+        </div>
+        <!-- Dritte Karte -->
+        <div class="col-md-4">
+          <div class="card column-box">
+            <img class="card-img-top" src="Images/stefan.png" alt="Kontakt" style="width:100%">
+            <div class="card-body">
+              <h4 class="card-title">Administration</h4>
+              <p class="card-text">Stefan ist für die Kundenbetreuung und die Rechnungslegung sowie die gesamte Administration verantwortlich.</p>
+              <a href="kontakt.html" class="btn btn-primary">Mehr erfahren</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zusätzlicher Text -->
+    <div class="container mt-5">
+      <h3>Aller Motto: GEHT NICHT - GIBT ES NICHT</h3>
+      <p>Sie scheuen sich keiner Herausforderung :-)</p>
+      <ul>
+        <li>Motor zerlegen und wieder zusammenbauen</li>
+        <li>Getriebe in alle Einzelteile zerlegen und wieder zusammen stellen</li>
+        <li>usw. usw.</li>
+      </ul>
+      <p>- weil Ihnen die Arbeit Spaß macht und weil sie es Können :-)</p>
+      <p>Für Terminvereinbarungen rufen Sie bitte unter 0512/548048 Alexandra Gritscher an.</p>
+      <p>Wir freuen uns auf Sie!</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center py-3 bg-body-secondary footer">
+    <p class="mb-0">© 2024 KFZ Gritscher GmbH</p>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a href="impressum.html" class="text-decoration-none">Impressum</a></li>
+      <li class="list-inline-item"><a href="datenschutzerklaerung.html" class="text-decoration-none">Datenschutzerklärung</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-bs-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-bs-theme', newTheme);
+    }
+
+    // Darkmode-Schalter und Scroll-Handler
+    const themeSwitch = document.getElementById('themeSwitch');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        themeSwitch.classList.add('hidden');
+      } else {
+        themeSwitch.classList.remove('hidden');
+      }
+      lastScrollY = currentScrollY;
+    });
+
+    themeSwitch.addEventListener('click', toggleTheme);
+  </script>
+</body>
+
+</html>
